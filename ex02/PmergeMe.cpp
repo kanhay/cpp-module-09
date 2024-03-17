@@ -6,13 +6,20 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 14:09:05 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/03/16 18:08:45 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/03/17 21:32:15 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
 
-void Parsing::parser(int ac, char **av, std::vector<int> &range){
+PmergeMe::PmergeMe(){}
+PmergeMe::PmergeMe(const PmergeMe& ){}
+PmergeMe& PmergeMe::operator=(PmergeMe& ){
+    return *this;
+}
+PmergeMe::~PmergeMe(){}
+
+void PmergeMe::parser(int ac, char **av, std::vector<int> &range){
     try{
         if (ac < 2)
             throw (std::invalid_argument("There is nothing to sort!\n"));
@@ -36,21 +43,21 @@ void Parsing::parser(int ac, char **av, std::vector<int> &range){
     }
 }
 
-void Sorting::compPairedElements(std::vector<std::pair<int, int> > &chain){
+void PmergeMe::compPairedElements(std::vector<std::pair<int, int> > &chain){
     for (unsigned int i = 0; i < chain.size(); i++){
         if(chain[i].first < chain[i].second)
             std::swap(chain[i].first, chain[i].second);
     }
 }
 
-void Sorting::compPairedElements(std::deque<std::pair<int, int> > &chain){
+void PmergeMe::compPairedElements(std::deque<std::pair<int, int> > &chain){
     for (unsigned int i = 0; i < chain.size(); i++){
         if(chain[i].first < chain[i].second)
             std::swap(chain[i].first, chain[i].second);
     }
 }
 
-void    Sorting::merge(std::vector<std::pair<int, int> >::iterator begin,
+void    PmergeMe::merge(std::vector<std::pair<int, int> >::iterator begin,
 std::vector<std::pair<int, int> >::iterator mid, std::vector<std::pair<int, int> >::iterator end){
     std::vector<std::pair<int, int> >::iterator i = begin;
     std::vector<std::pair<int, int> >::iterator j = mid;
@@ -70,7 +77,7 @@ std::vector<std::pair<int, int> >::iterator mid, std::vector<std::pair<int, int>
     std::copy(sortedfirsts.begin(), sortedfirsts.end(), begin);
 }
 
-void    Sorting::merge(std::deque<std::pair<int, int> >::iterator begin,
+void    PmergeMe::merge(std::deque<std::pair<int, int> >::iterator begin,
 std::deque<std::pair<int, int> >::iterator mid, std::deque<std::pair<int, int> >::iterator end){
     std::deque<std::pair<int, int> >::iterator i = begin;
     std::deque<std::pair<int, int> >::iterator j = mid;
@@ -90,7 +97,7 @@ std::deque<std::pair<int, int> >::iterator mid, std::deque<std::pair<int, int> >
     std::copy(sortedfirsts.begin(), sortedfirsts.end(), begin);
 }
 
-void    Sorting::mergeSortAlgo(std::vector<std::pair<int, int> > &chain, std::vector<std::pair<int, int> >::iterator begin, 
+void    PmergeMe::mergeSortAlgo(std::vector<std::pair<int, int> > &chain, std::vector<std::pair<int, int> >::iterator begin, 
 std::vector<std::pair<int, int> >::iterator end){
     std::vector<std::pair<int, int> >::iterator mid = begin + ((end - begin) / 2);
     if (begin == mid)
@@ -100,7 +107,7 @@ std::vector<std::pair<int, int> >::iterator end){
     merge(begin, mid, end);
 }
 
-void    Sorting::mergeSortAlgo(std::deque<std::pair<int, int> > &chain, std::deque<std::pair<int, int> >::iterator begin, 
+void    PmergeMe::mergeSortAlgo(std::deque<std::pair<int, int> > &chain, std::deque<std::pair<int, int> >::iterator begin, 
 std::deque<std::pair<int, int> >::iterator end){
     std::deque<std::pair<int, int> >::iterator mid = begin + ((end - begin) / 2);
     if (begin == mid)
@@ -111,7 +118,7 @@ std::deque<std::pair<int, int> >::iterator end){
 }
 
 
-void Jacobsthal::myJacobsthal(std::vector<int>& vJacobsthal, std::vector<std::pair<int, int> > &chain){
+void PmergeMe::myJacobsthal(std::vector<int>& vJacobsthal, std::vector<std::pair<int, int> > &chain){
     vJacobsthal.push_back(1);
     vJacobsthal.push_back(1);
     std::vector<int>::iterator j = --vJacobsthal.end();
@@ -123,7 +130,7 @@ void Jacobsthal::myJacobsthal(std::vector<int>& vJacobsthal, std::vector<std::pa
     }
 }
 
-void Jacobsthal::myJacobsthal(std::deque<int>& vJacobsthal, std::deque<std::pair<int, int> > &chain){
+void PmergeMe::myJacobsthal(std::deque<int>& vJacobsthal, std::deque<std::pair<int, int> > &chain){
     vJacobsthal.push_back(1);
     vJacobsthal.push_back(1);
     std::deque<int>::iterator j = --vJacobsthal.end();
@@ -151,7 +158,7 @@ void    separatePaired2(std::deque<std::pair<int, int> > &paired, std::deque<int
     }
 }
 
-void container1(std::vector<int> &argVec){
+void PmergeMe::container1(std::vector<int> &argVec){
     std::vector<std::pair<int, int> > paired;
     std::cout << "Before Sorting: ";
     for (unsigned int i = 0; i < argVec.size(); i++)
@@ -163,15 +170,15 @@ void container1(std::vector<int> &argVec){
             break;}
         paired.push_back(std::make_pair(argVec[i], argVec[i + 1]));
     }
-    Sorting::compPairedElements(paired);
+    compPairedElements(paired);
     if (paired.size() > 1)
-        Sorting::mergeSortAlgo(paired, paired.begin(), paired.end());
+       mergeSortAlgo(paired, paired.begin(), paired.end());
     std::vector<int> firsts;
     // firsts.reserve(ac - 1);
     std::vector<int> seconds;
     separatePaired1(paired, firsts, seconds);
     std::vector<int> vJacobsthal;
-    Jacobsthal::myJacobsthal(vJacobsthal, paired);
+    myJacobsthal(vJacobsthal, paired);
     if (seconds[0] >= 0) //only if the number of arguments is not odd
         firsts.insert(firsts.begin(), seconds[0]);
     unsigned int oldindex = 0;
@@ -195,7 +202,7 @@ void container1(std::vector<int> &argVec){
     std::cout << "\nTime to process a range of " << argVec.size() << " elements with std::vector<int> : " << time.count() << " us\n";
 }
 
-void container2(std::vector<int> &argVec){
+void PmergeMe::container2(std::vector<int> &argVec){
     std::deque<std::pair<int, int> > paired;
     std::cout << "Before Sorting: "; //printing arguments before sorting
     for (unsigned int i = 0; i < argVec.size(); i++)
@@ -207,15 +214,15 @@ void container2(std::vector<int> &argVec){
             break;}
         paired.push_back(std::make_pair(argVec[i], argVec[i + 1]));
     }
-    Sorting::compPairedElements(paired);
+    compPairedElements(paired);
     if (paired.size() > 1)
-        Sorting::mergeSortAlgo(paired, paired.begin(), paired.end());
+        mergeSortAlgo(paired, paired.begin(), paired.end());
     std::deque<int> firsts;
     // firsts.reserve(ac - 1);
     std::deque<int> seconds;
     separatePaired2(paired, firsts, seconds);
     std::deque<int> vJacobsthal;
-    Jacobsthal::myJacobsthal(vJacobsthal, paired);
+    myJacobsthal(vJacobsthal, paired);
     if (seconds[0] >= 0) //only if the number of arguments is not odd
         firsts.insert(firsts.begin(), seconds[0]);
     unsigned int oldindex = 0;

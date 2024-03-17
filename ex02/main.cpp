@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 14:09:33 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/03/16 15:25:21 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/03/17 21:25:21 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 int main(int ac, char **av){
     std::vector<int> argVec;
-    Parsing::parser(ac, av, argVec);
-    container1(argVec);
-    container2(argVec);
+    PmergeMe ob;
+    ob.parser(ac, av, argVec);
+    ob.container1(argVec);
+    ob.container2(argVec);
 }
