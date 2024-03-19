@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 14:09:42 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/03/17 21:31:28 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/03/19 21:48:13 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@
 #include <vector>
 #include <algorithm>
 #include <deque>
-#include <chrono>
+#include <ctime>
 
 class PmergeMe{
     public:
         PmergeMe();
         PmergeMe(const PmergeMe& ob);
-        PmergeMe& operator=(PmergeMe& ob);
+        PmergeMe& operator=(const PmergeMe& ob);
         ~PmergeMe();
 
         void parser(int ac, char **av, std::vector<int> &range);
@@ -36,9 +36,9 @@ class PmergeMe{
         void compPairedElements(std::vector<std::pair<int, int> > &chain);
         void compPairedElements(std::deque<std::pair<int, int> > &chain);
         
-        void    mergeSortAlgo(std::vector<std::pair<int, int> > &chain, std::vector<std::pair<int, int> >::iterator begin, 
+        void    mergeSortAlgo(std::vector<std::pair<int, int> >::iterator begin, 
                 std::vector<std::pair<int, int> >::iterator end);
-        void    mergeSortAlgo(std::deque<std::pair<int, int> > &chain, std::deque<std::pair<int, int> >::iterator begin, 
+        void    mergeSortAlgo(std::deque<std::pair<int, int> >::iterator begin, 
                 std::deque<std::pair<int, int> >::iterator end);
     
         void    merge(std::vector<std::pair<int, int> >::iterator begin,

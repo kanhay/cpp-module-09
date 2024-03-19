@@ -6,40 +6,33 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 14:09:05 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/03/17 21:32:15 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/03/19 22:50:31 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
-
 PmergeMe::PmergeMe(){}
 PmergeMe::PmergeMe(const PmergeMe& ){}
-PmergeMe& PmergeMe::operator=(PmergeMe& ){
+PmergeMe& PmergeMe::operator=(const PmergeMe& ){
     return *this;
 }
 PmergeMe::~PmergeMe(){}
 
 void PmergeMe::parser(int ac, char **av, std::vector<int> &range){
-    try{
-        if (ac < 2)
-            throw (std::invalid_argument("There is nothing to sort!\n"));
-        for (int i = 1; i < ac; i++)
-        {
-            std::istringstream iss(av[i]);
-            long element;
-            iss >> element;
-            if (iss.fail())
+    if (ac < 2)
+        throw (std::invalid_argument("There is nothing to sort!\n"));
+    for (int i = 1; i < ac; i++)
+    {
+        std::istringstream iss(av[i]);
+        long element;
+        iss >> element;
+        if (iss.fail() || !iss.eof())
+            throw (std::invalid_argument("Invalid input\n"));
+        else{
+            if (element < 0 || element > INT_MAX)
                 throw (std::invalid_argument("Invalid input\n"));
-            else{
-                if (element < 0 || element > INT_MAX)
-                    throw (std::invalid_argument("Invalid input\n"));
-                range.push_back(element);
-            }
+            range.push_back(element);
         }
-    }
-    catch (std::exception &e){
-        std::cerr << "Exception: " << e.what();
-        exit(1);
     }
 }
 
@@ -97,23 +90,24 @@ std::deque<std::pair<int, int> >::iterator mid, std::deque<std::pair<int, int> >
     std::copy(sortedfirsts.begin(), sortedfirsts.end(), begin);
 }
 
-void    PmergeMe::mergeSortAlgo(std::vector<std::pair<int, int> > &chain, std::vector<std::pair<int, int> >::iterator begin, 
+void    PmergeMe::mergeSortAlgo(std::vector<std::pair<int, int> >::iterator begin, 
 std::vector<std::pair<int, int> >::iterator end){
     std::vector<std::pair<int, int> >::iterator mid = begin + ((end - begin) / 2);
     if (begin == mid)
         return ;
-    mergeSortAlgo(chain, begin, mid);
-    mergeSortAlgo(chain, mid, end);
+    
+    mergeSortAlgo(begin, mid);
+    mergeSortAlgo(mid, end);
     merge(begin, mid, end);
 }
 
-void    PmergeMe::mergeSortAlgo(std::deque<std::pair<int, int> > &chain, std::deque<std::pair<int, int> >::iterator begin, 
+void    PmergeMe::mergeSortAlgo(std::deque<std::pair<int, int> >::iterator begin, 
 std::deque<std::pair<int, int> >::iterator end){
     std::deque<std::pair<int, int> >::iterator mid = begin + ((end - begin) / 2);
     if (begin == mid)
         return ;
-    mergeSortAlgo(chain, begin, mid);
-    mergeSortAlgo(chain, mid, end);
+    mergeSortAlgo(begin, mid);
+    mergeSortAlgo(mid, end);
     merge(begin, mid, end);
 }
 
@@ -159,89 +153,101 @@ void    separatePaired2(std::deque<std::pair<int, int> > &paired, std::deque<int
 }
 
 void PmergeMe::container1(std::vector<int> &argVec){
-    std::vector<std::pair<int, int> > paired;
     std::cout << "Before Sorting: ";
     for (unsigned int i = 0; i < argVec.size(); i++)
         std::cout << argVec[i] << " ";
-    std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now(); //chrono
-    for (unsigned int i = 0; i < argVec.size(); i += 2){
-        if (argVec.size() % 2 && (i + 1) == argVec.size()){
-            paired.push_back(std::make_pair(argVec[i], -1));
-            break;}
-        paired.push_back(std::make_pair(argVec[i], argVec[i + 1]));
-    }
-    compPairedElements(paired);
-    if (paired.size() > 1)
-       mergeSortAlgo(paired, paired.begin(), paired.end());
+    std::vector<std::pair<int, int> > paired;
     std::vector<int> firsts;
-    // firsts.reserve(ac - 1);
-    std::vector<int> seconds;
-    separatePaired1(paired, firsts, seconds);
-    std::vector<int> vJacobsthal;
-    myJacobsthal(vJacobsthal, paired);
-    if (seconds[0] >= 0) //only if the number of arguments is not odd
-        firsts.insert(firsts.begin(), seconds[0]);
-    unsigned int oldindex = 0;
-    for (unsigned int i = 2; i < vJacobsthal.size(); i++){ //index 2 which contain number 3
-        unsigned int newindex = i; //no need to deducte 1 because number 3 in JS is also in index 2
-        if(newindex >= seconds.size())
-            break;
-        while (newindex > oldindex){
-            std::vector<int>::iterator it;
-            it = std::upper_bound(firsts.begin(), firsts.end(), seconds[newindex]);
-            firsts.insert(it, seconds[newindex]);
-            newindex--;
+    clock_t start = clock();
+    if (argVec.size() > 1){
+        for (unsigned int i = 0; i < argVec.size(); i += 2){
+            if (argVec.size() % 2 && (i + 1) == argVec.size()){
+                paired.push_back(std::make_pair(argVec[i], -1));
+                break;}
+            paired.push_back(std::make_pair(argVec[i], argVec[i + 1]));
         }
-        oldindex = i;
-    }
-    std::chrono::time_point<std::chrono::high_resolution_clock> end = std::chrono::high_resolution_clock::now(); //chrono
-    std::cout << "\nAfter  Sorting: "; //printing arguments after sorting
-    for (unsigned int i = 0; i < firsts.size(); i++)
-        std::cout << firsts[i] << " ";
-    std::chrono::microseconds time = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    std::cout << "\nTime to process a range of " << argVec.size() << " elements with std::vector<int> : " << time.count() << " us\n";
+        compPairedElements(paired);
+        mergeSortAlgo(paired.begin(), paired.end());
+        std::vector<int> seconds;
+        separatePaired1(paired, firsts, seconds);
+        std::vector<int> vJacobsthal;
+        myJacobsthal(vJacobsthal, paired);
+        firsts.insert(firsts.begin(), seconds[0]);
+        unsigned int oldindex = 0;
+        unsigned int i = 2;
+        if (seconds.size() - 1 < 2)
+            i = seconds.size() - 1;
+        while (i < seconds.size()){
+            unsigned int newindex = i;
+            if(newindex >= seconds.size())
+                break;
+            while (newindex > oldindex){
+                std::vector<int>::iterator it;
+                it = std::upper_bound(firsts.begin(), firsts.end(), seconds[newindex]);
+                firsts.insert(it, seconds[newindex]);
+                newindex--;
+            }
+            oldindex = i;
+            i++;
+        }}
+    clock_t end = clock();
+    std::cout << "\nAfter  Sorting: ";
+    for (unsigned int i = 0; i < firsts.size(); i++){
+        if (firsts[i] >= 0)
+        std::cout << firsts[i] << " ";}
+    if (argVec.size() == 1)
+        std::cout << argVec[0];
+    clock_t diff = end - start;
+    std::cout << "\nTime to process a range of " << argVec.size() << " elements with std::vector<int> : " << ((double)diff / CLOCKS_PER_SEC)  * 1e6 << " us\n";
 }
 
 void PmergeMe::container2(std::vector<int> &argVec){
-    std::deque<std::pair<int, int> > paired;
-    std::cout << "Before Sorting: "; //printing arguments before sorting
+    std::cout << "Before Sorting: ";
     for (unsigned int i = 0; i < argVec.size(); i++)
         std::cout << argVec[i] << " ";
-    std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now(); //chrono
-    for (unsigned int i = 0; i < argVec.size(); i += 2){
-        if (argVec.size() % 2 && (i + 1) == argVec.size()){
-            paired.push_back(std::make_pair(argVec[i], -1));
-            break;}
-        paired.push_back(std::make_pair(argVec[i], argVec[i + 1]));
-    }
-    compPairedElements(paired);
-    if (paired.size() > 1)
-        mergeSortAlgo(paired, paired.begin(), paired.end());
+    std::deque<std::pair<int, int> > paired;
     std::deque<int> firsts;
-    // firsts.reserve(ac - 1);
-    std::deque<int> seconds;
-    separatePaired2(paired, firsts, seconds);
-    std::deque<int> vJacobsthal;
-    myJacobsthal(vJacobsthal, paired);
-    if (seconds[0] >= 0) //only if the number of arguments is not odd
-        firsts.insert(firsts.begin(), seconds[0]);
-    unsigned int oldindex = 0;
-    for (unsigned int i = 2; i < vJacobsthal.size(); i++){ //index 2 which contain number 3
-        unsigned int newindex = i; //no need to deducte 1 because number 3 in JS is also in index 2
-        if(newindex >= seconds.size())
-            break;
-        while (newindex > oldindex){
-            std::deque<int>::iterator it;
-            it = std::upper_bound(firsts.begin(), firsts.end(), seconds[newindex]);
-            firsts.insert(it, seconds[newindex]);
-            newindex--;
+    
+    clock_t start = clock();
+    if (argVec.size() > 1){
+        for (unsigned int i = 0; i < argVec.size(); i += 2){
+            if (argVec.size() % 2 && (i + 1) == argVec.size()){
+                paired.push_back(std::make_pair(argVec[i], -1));
+                break;}
+            paired.push_back(std::make_pair(argVec[i], argVec[i + 1]));
         }
-        oldindex = i;
+        compPairedElements(paired);
+        mergeSortAlgo(paired.begin(), paired.end());
+        std::deque<int> seconds;
+        separatePaired2(paired, firsts, seconds);
+        std::deque<int> vJacobsthal;
+        myJacobsthal(vJacobsthal, paired);
+        firsts.insert(firsts.begin(), seconds[0]);
+        unsigned int oldindex = 0;
+        unsigned int i = 2;
+        if (seconds.size() <= 2)
+            i = seconds.size() - 1;
+        while (i < seconds.size()){
+            unsigned int newindex = i;
+            if(newindex >= seconds.size())
+                break;
+            while (newindex > oldindex){
+                std::deque<int>::iterator it;
+                it = std::upper_bound(firsts.begin(), firsts.end(), seconds[newindex]);
+                firsts.insert(it, seconds[newindex]);
+                newindex--;
+            }
+            oldindex = i;
+            i++;
+        }}
+    clock_t end = clock();
+    std::cout << "\nAfter  Sorting: ";
+    for (unsigned int i = 0; i < firsts.size(); i++){
+        if (firsts[i] >= 0)
+            std::cout << firsts[i] << " ";
     }
-    std::chrono::time_point<std::chrono::high_resolution_clock> end = std::chrono::high_resolution_clock::now(); //chrono
-    std::cout << "\nAfter  Sorting: "; //printing arguments after sorting
-    for (unsigned int i = 0; i < firsts.size(); i++)
-        std::cout << firsts[i] << " ";
-    std::chrono::microseconds time = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    std::cout << "\nTime to process a range of " << argVec.size() << " elements with std::deque<int> : " << time.count() << " us\n";
+    if (argVec.size() == 1)
+        std::cout << argVec[0];
+    clock_t diff = (end - start);
+    std::cout << "\nTime to process a range of " << argVec.size() << " elements with std::deque<int> : " << ((double)diff / CLOCKS_PER_SEC) * 1e6 << " us\n";
 }

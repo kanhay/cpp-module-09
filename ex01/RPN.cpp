@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 12:31:52 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/03/17 19:57:48 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/03/19 20:24:44 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,34 +51,34 @@ void    Rpn::rpnCalculator(){
     int f = 0;
     while (iss >> element){
         f++;
-        if (!element.empty() && element.size() == 1 && std::strchr("+-/*", element[0])){
+        if (element.size() == 1 && std::strchr("+-/*", element[0])){
             if (mystack.size() < 2)
+                throw (std::invalid_argument("Error\n"));
+            if (element[0] == '/' && mystack.top() == 0)
                 throw (std::invalid_argument("Error\n"));
             long nbr2 = mystack.top();
             mystack.pop();
             long nbr1 = mystack.top();
             mystack.pop();
-            if (element[0] == '/' && nbr2 == 0)
-                throw (std::invalid_argument("Error\n"));
             long res = doOperation(nbr1, nbr2, element[0]);
             if (res < INT_MIN || res > INT_MAX)
                 throw (std::invalid_argument("Error\n"));
             mystack.push(res);
         }
-        else if (!element.empty() && (std::isdigit(element[0]) || element[0] == '-' || element[0] == '+')){
+        else if ((std::isdigit(element[0]) || element[0] == '-' || element[0] == '+')){
             char *end;
-            std::strtod(element.c_str(), &end);
+            double d = std::strtod(element.c_str(), &end);
             if (end[0])
                 throw (std::invalid_argument("Error\n"));
-            mystack.push(std::stoi(element));
+            mystack.push(d);
         }
         else
             throw (std::invalid_argument("Error\n"));
     }
-    if (f == 0)//if rpNotation contain only spaces
+    if (f == 0)
         throw (std::invalid_argument("Error\n"));
     if (!mystack.empty() && mystack.size() == 1)
-        std::cout << mystack.top();
+        std::cout << mystack.top() << "\n";
     else
-        throw (std::invalid_argument("Error\n"));//in case there is 2 nbr and no operator
+        throw (std::invalid_argument("Error\n"));
 }

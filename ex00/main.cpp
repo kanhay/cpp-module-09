@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/10 15:26:31 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/03/17 17:21:30 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/03/19 13:14:16 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 
 int main(int ac, char **av){
-    if (ac != 2)
-        return(std::cerr << "Error: invalid number of arguments\n", 1);
     try{
+        if (ac != 2)
+            throw std::invalid_argument("Invalid number of arguments\n");
         std::string file = av[1];
         BitcoinExchange ob(file);
         ob.fillMymap();

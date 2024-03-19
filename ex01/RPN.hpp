@@ -6,7 +6,7 @@
 /*   By: khanhayf <khanhayf@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 12:44:53 by khanhayf          #+#    #+#             */
-/*   Updated: 2024/03/17 19:58:21 by khanhayf         ###   ########.fr       */
+/*   Updated: 2024/03/19 13:33:14 by khanhayf         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <iostream>
 #include <sstream>
 #include <stack>
+#include <climits>
 
 class Rpn{
     private:
